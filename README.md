@@ -21,7 +21,7 @@ To use the provider, include it in your Terraform configuration:
 terraform {
   required_providers {
     zendesk = {
-      source = "diogocosta/zendesk"
+      source = "diogocosta/terraform-provider-zendesk"
     }
   }
 }
@@ -138,6 +138,83 @@ output "oauth_token" {
   sensitive = true
 }
 ```
+
+## Contributing
+
+We welcome contributions to this provider! Here's how you can help:
+
+### Development Requirements
+
+- [Go](http://www.golang.org) version 1.21+
+- [Terraform](https://www.terraform.io/downloads.html) version 1.0+
+- A Zendesk account for testing
+
+### Setting Up Development Environment
+
+1. Fork the repository
+2. Clone your fork
+3. Create a new branch for your changes:
+   ```bash
+   git checkout -b feature/your-feature-name
+   ```
+4. Make your changes
+5. Run tests:
+   ```bash
+   go test -v ./...
+   ```
+
+### Running Acceptance Tests
+
+To run the acceptance tests, you'll need to set the following environment variables:
+```bash
+export ZENDESK_SUBDOMAIN="your-subdomain"
+export ZENDESK_EMAIL="your-email"
+export ZENDESK_API_TOKEN="your-token"
+```
+
+Then run the acceptance tests:
+```bash
+make testacc
+```
+
+**Note:** Acceptance tests create real resources in your Zendesk account.
+
+### Submitting Changes
+
+1. Update documentation as needed
+2. Add tests for new features
+3. Run the test suite
+4. Commit your changes (make sure your commit messages are clear)
+5. Push to your fork
+6. Create a Pull Request
+
+### Pull Request Process
+
+1. Update the README.md with details of changes if needed
+2. Update the examples/ directory with examples demonstrating new features
+3. The PR will be merged once you have the sign-off of the maintainers
+
+### Release Process
+
+Releases are automatically created when a new tag is pushed:
+
+```bash
+git tag v1.0.0
+git push origin v1.0.0
+```
+
+The release workflow will:
+1. Build the provider for all supported platforms
+2. Create a draft GitHub release
+3. Sign the release with GPG
+4. Upload all artifacts
+
+### Code of Conduct
+
+- Be respectful and inclusive
+- Provide constructive feedback
+- Focus on what is best for the community
+- Show empathy towards other community members
 
 ## Development
 

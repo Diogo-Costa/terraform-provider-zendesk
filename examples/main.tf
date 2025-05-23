@@ -1,7 +1,7 @@
 terraform {
   required_providers {
     zendesk = {
-      source = "diogocosta/zendesk"
+      source = "diogocosta/terraform-provider-zendesk"
     }
   }
 }

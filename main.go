@@ -20,7 +20,7 @@ func main() {
 	flag.Parse()
 
 	opts := providerserver.ServeOpts{
-		Address: "registry.terraform.io/diogocosta/zendesk",
+		Address: "registry.terraform.io/diogocosta/terraform-provider-zendesk",
 		Debug:   debug,
 	}
 
