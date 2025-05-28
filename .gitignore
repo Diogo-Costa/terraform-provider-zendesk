@@ -1,0 +1,9 @@
+terraform-provider-zendesk
+# Local .terraform directories
+.terraform/
+# Local .terraform.lock.hcl files
+.terraform.lock.hcl
+# Local tfstate files
+*.tfstate
+# Local tfstate backup files
+*.tfstate.backup
