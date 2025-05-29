@@ -7,3 +7,4 @@ terraform-provider-zendesk
 *.tfstate
 # Local tfstate backup files
 *.tfstate.backup
+dist/
