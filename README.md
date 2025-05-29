@@ -1,229 +1,129 @@
-# Terraform Provider for Zendesk OAuth
+<p align="center">
+  <img alt="GoReleaser Logo" src="https://avatars2.githubusercontent.com/u/24697112?v=3&s=200" height="140" />
+  <h3 align="center">GoReleaser</h3>
+  <p align="center">Deliver Go binaries as fast and easily as possible.</p>
+</p>
 
-This Terraform provider allows you to manage OAuth clients and tokens in Zendesk. It provides resources for creating and managing OAuth clients and their associated access tokens.
+---
 
-## Requirements
+GoReleaser builds Go binaries for several platforms, creates a GitHub release and then
+pushes a Homebrew formula to a tap repository. All that wrapped in your favorite CI.
 
-- [Terraform](https://www.terraform.io/downloads.html) >= 1.0
-- [Go](https://golang.org/doc/install) >= 1.21
+![](https://raw.githubusercontent.com/goreleaser/example-simple/main/goreleaser.gif)
 
-## Building The Provider
+---
 
-1. Clone the repository
-2. Enter the repository directory
-3. Build the provider using `go build -o terraform-provider-zendesk`
+## Get GoReleaser
 
-## Using the provider
+- [On your machine](https://goreleaser.com/install/);
+- [On CI/CD systems](https://goreleaser.com/ci/).
 
-To use the provider, include it in your Terraform configuration:
+## Documentation
 
-```hcl
-terraform {
-  required_providers {
-    zendesk = {
-      source = "diogocosta/terraform-provider-zendesk"
-    }
-  }
-}
+Documentation is hosted live at https://goreleaser.com
 
-provider "zendesk" {
-  subdomain = "your-subdomain"  # The subdomain of your Zendesk account (e.g., company in company.zendesk.com)
-  email     = "admin@example.com"  # Your Zendesk admin email
-  api_token = "your-api-token"  # Your Zendesk API token
-}
+## Community
 
-# Create an OAuth client
-resource "zendesk_oauth_client" "example" {
-  name        = "Example Client"
-  identifier  = "example_client"
-  kind        = "public"
-  description = "OAuth client for my custom application"  # Optional description
-}
+You have questions, need support and or just want to talk about GoReleaser?
 
-# Create an OAuth token with expiration
-resource "zendesk_oauth_token" "example" {
-  client_id  = zendesk_oauth_client.example.id
-  scopes     = ["read", "write"]
-  expires_at = "2024-12-31T23:59:59Z"  # Optional expiration date
-}
-```
+Here are ways to get in touch with the GoReleaser community:
 
-### Environment Variables
+[![Join Discord](https://img.shields.io/badge/Join_our_Discord_server-5865F2?style=for-the-badge&logo=discord&logoColor=white)](https://discord.gg/RGEBtg8vQ6)
+[![Follow Twitter](https://img.shields.io/badge/follow_on_twitter-1DA1F2?style=for-the-badge&logo=twitter&logoColor=white)](https://twitter.com/goreleaser)
+[![GitHub Discussions](https://img.shields.io/badge/GITHUB_DISCUSSION-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/goreleaser/goreleaser/discussions)
 
-You can also use environment variables to configure the provider:
-
-- `ZENDESK_SUBDOMAIN` - The subdomain of your Zendesk account
-- `ZENDESK_EMAIL` - Your Zendesk admin email
-- `ZENDESK_API_TOKEN` - Your Zendesk API token
-
-## Resources
-
-### `zendesk_oauth_client`
-
-Manages a Zendesk OAuth client.
-
-#### Argument Reference
-
-* `name` - (Required) The name of the OAuth client.
-* `identifier` - (Required) The unique identifier of the OAuth client.
-* `kind` - (Required) The kind of OAuth client (e.g., 'public').
-* `description` - (Optional) A description of the OAuth client.
-
-#### Attribute Reference
-
-* `id` - The ID of the OAuth client.
-
-### `zendesk_oauth_token`
-
-Manages a Zendesk OAuth token.
-
-#### Argument Reference
-
-* `client_id` - (Required) The ID of the OAuth client.
-* `scopes` - (Required) The list of scopes granted to the OAuth token.
-* `expires_at` - (Optional) The expiration date of the token in ISO 8601 format (e.g., '2024-12-31T23:59:59Z'). If not set, the token will not expire.
-
-#### Attribute Reference
-
-* `id` - The ID of the OAuth token.
-* `full_token` - The full OAuth token value (only available after creation).
-
-## Examples
-
-### Basic OAuth Client and Token
-
-```hcl
-# Create a basic OAuth client
-resource "zendesk_oauth_client" "basic" {
-  name       = "Basic Client"
-  identifier = "basic_client"
-  kind       = "public"
-}
-
-# Create a non-expiring token
-resource "zendesk_oauth_token" "basic" {
-  client_id = zendesk_oauth_client.basic.id
-  scopes    = ["read"]
-}
-```
-
-### OAuth Client with Description and Expiring Token
-
-```hcl
-# Create an OAuth client with description
-resource "zendesk_oauth_client" "app" {
-  name        = "My Custom App"
-  identifier  = "my_custom_app"
-  kind        = "public"
-  description = "OAuth client for my custom application that integrates with Zendesk"
-}
-
-# Create a token that expires in one year
-resource "zendesk_oauth_token" "app_token" {
-  client_id  = zendesk_oauth_client.app.id
-  expires_at = timeadd(timestamp(), "8760h")  # 1 year from now
-  scopes     = [
-    "read",
-    "write",
-    "tickets:read",
-    "tickets:write",
-    "users:read",
-    "users:write"
-  ]
-}
-
-# Output the token value (sensitive)
-output "oauth_token" {
-  value     = zendesk_oauth_token.app_token.full_token
-  sensitive = true
-}
-```
-
-## Contributing
-
-We welcome contributions to this provider! Here's how you can help:
-
-### Development Requirements
-
-- [Go](http://www.golang.org) version 1.21+
-- [Terraform](https://www.terraform.io/downloads.html) version 1.0+
-- A Zendesk account for testing
-
-### Setting Up Development Environment
-
-1. Fork the repository
-2. Clone your fork
-3. Create a new branch for your changes:
-   ```bash
-   git checkout -b feature/your-feature-name
-   ```
-4. Make your changes
-5. Run tests:
-   ```bash
-   go test -v ./...
-   ```
-
-### Running Acceptance Tests
-
-To run the acceptance tests, you'll need to set the following environment variables:
-```bash
-export ZENDESK_SUBDOMAIN="your-subdomain"
-export ZENDESK_EMAIL="your-email"
-export ZENDESK_API_TOKEN="your-token"
-```
-
-Then run the acceptance tests:
-```bash
-make testacc
-```
-
-**Note:** Acceptance tests create real resources in your Zendesk account.
-
-### Submitting Changes
-
-1. Update documentation as needed
-2. Add tests for new features
-3. Run the test suite
-4. Commit your changes (make sure your commit messages are clear)
-5. Push to your fork
-6. Create a Pull Request
-
-### Pull Request Process
-
-1. Update the README.md with details of changes if needed
-2. Update the examples/ directory with examples demonstrating new features
-3. The PR will be merged once you have the sign-off of the maintainers
-
-### Release Process
-
-Releases are automatically created when a new tag is pushed:
-
-```bash
-git tag v1.0.0
-git push origin v1.0.0
-```
-
-The release workflow will:
-1. Build the provider for all supported platforms
-2. Create a draft GitHub release
-3. Sign the release with GPG
-4. Upload all artifacts
+You can find the links above and all others [here](https://goreleaser.com/links/).
 
 ### Code of Conduct
 
-- Be respectful and inclusive
-- Provide constructive feedback
-- Focus on what is best for the community
-- Show empathy towards other community members
+This project adheres to the Contributor Covenant [code of conduct](https://github.com/goreleaser/.github/blob/main/CODE_OF_CONDUCT.md).
+By participating, you are expected to uphold this code.
+We appreciate your contribution.
+Please refer to our [contributing guidelines](CONTRIBUTING.md) for further information.
 
-## Development
+## Badges
 
-If you wish to work on the provider, you'll first need [Go](http://www.golang.org) installed on your machine (version 1.21+ is *required*).
+[![Release](https://img.shields.io/github/release/goreleaser/goreleaser.svg?style=for-the-badge)](https://github.com/goreleaser/goreleaser/releases/latest)
+[![Software License](https://img.shields.io/badge/license-MIT-brightgreen.svg?style=for-the-badge)](/LICENSE.md)
+[![Build status](https://img.shields.io/github/actions/workflow/status/goreleaser/goreleaser/build.yml?style=for-the-badge&branch=main)](https://github.com/goreleaser/goreleaser/actions?workflow=build)
+[![Codecov branch](https://img.shields.io/codecov/c/github/goreleaser/goreleaser/main.svg?style=for-the-badge)](https://codecov.io/gh/goreleaser/goreleaser)
+[![Artifact Hub](https://img.shields.io/endpoint?url=https://artifacthub.io/badge/repository/goreleaser&style=for-the-badge)](https://artifacthub.io/packages/search?repo=goreleaser)
+[![Go Doc](https://img.shields.io/badge/godoc-reference-blue.svg?style=for-the-badge)](http://godoc.org/github.com/goreleaser/goreleaser)
+[![Powered By: GoReleaser](https://img.shields.io/badge/powered%20by-goreleaser-green.svg?style=for-the-badge)](https://github.com/goreleaser)
+[![Backers on Open Collective](https://opencollective.com/goreleaser/backers/badge.svg?style=for-the-badge)](https://opencollective.com/goreleaser/backers/)
+[![Sponsors on Open Collective](https://opencollective.com/goreleaser/sponsors/badge.svg?style=for-the-badge)](https://opencollective.com/goreleaser/sponsors/)
+[![Conventional Commits](https://img.shields.io/badge/Conventional%20Commits-1.0.0-yellow.svg?style=for-the-badge)](https://conventionalcommits.org)
+[![CII Best Practices](https://img.shields.io/cii/summary/5420?label=openssf%20best%20practices&style=for-the-badge)](https://bestpractices.coreinfrastructure.org/projects/5420)
 
-To compile the provider, run `go build`. This will build the provider and put the provider binary in the current directory.
+## GitHub Sponsors
 
-To generate or update documentation, run `go generate`.
+High-tier sponsors of [@caarlos0](https://github.com/sponsors/caarlos0/) on GitHub:
 
-In order to run the full suite of acceptance tests, run `make testacc`.
+<a href="https://smallstep.com" target="_blank"><img width="200" src="https://github.com/goreleaser/goreleaser/assets/245435/05ade839-6652-474a-af90-da3ea67dde24"></a>
 
-*Note:* Acceptance tests create real resources, and often cost money to run. 
+## OpenCollective
+
+### Sponsors
+
+Does your company use goreleaser? Help keep the project bug-free and feature rich by [sponsoring the project](https://opencollective.com/goreleaser#sponsor).
+
+<a href="https://opencollective.com/goreleaser/sponsors/0/website" target="_blank"><img src="https://opencollective.com/goreleaser/sponsors/0/avatar"></a>
+<a href="https://opencollective.com/goreleaser/sponsors/1/website" target="_blank"><img src="https://opencollective.com/goreleaser/sponsors/1/avatar"></a>
+<a href="https://opencollective.com/goreleaser/sponsors/2/website" target="_blank"><img src="https://opencollective.com/goreleaser/sponsors/2/avatar"></a>
+<a href="https://opencollective.com/goreleaser/sponsors/3/website" target="_blank"><img src="https://opencollective.com/goreleaser/sponsors/3/avatar"></a>
+<a href="https://opencollective.com/goreleaser/sponsors/4/website" target="_blank"><img src="https://opencollective.com/goreleaser/sponsors/4/avatar"></a>
+<a href="https://opencollective.com/goreleaser/sponsors/5/website" target="_blank"><img src="https://opencollective.com/goreleaser/sponsors/5/avatar"></a>
+<a href="https://opencollective.com/goreleaser/sponsors/6/website" target="_blank"><img src="https://opencollective.com/goreleaser/sponsors/6/avatar"></a>
+<a href="https://opencollective.com/goreleaser/sponsors/7/website" target="_blank"><img src="https://opencollective.com/goreleaser/sponsors/7/avatar"></a>
+<a href="https://opencollective.com/goreleaser/sponsors/8/website" target="_blank"><img src="https://opencollective.com/goreleaser/sponsors/8/avatar"></a>
+<a href="https://opencollective.com/goreleaser/sponsors/9/website" target="_blank"><img src="https://opencollective.com/goreleaser/sponsors/9/avatar"></a>
+<a href="https://opencollective.com/goreleaser/sponsors/10/website" target="_blank"><img src="https://opencollective.com/goreleaser/sponsors/10/avatar"></a>
+<a href="https://opencollective.com/goreleaser/sponsors/11/website" target="_blank"><img src="https://opencollective.com/goreleaser/sponsors/11/avatar"></a>
+<a href="https://opencollective.com/goreleaser/sponsors/12/website" target="_blank"><img src="https://opencollective.com/goreleaser/sponsors/12/avatar"></a>
+<a href="https://opencollective.com/goreleaser/sponsors/13/website" target="_blank"><img src="https://opencollective.com/goreleaser/sponsors/13/avatar"></a>
+<a href="https://opencollective.com/goreleaser/sponsors/14/website" target="_blank"><img src="https://opencollective.com/goreleaser/sponsors/14/avatar"></a>
+<a href="https://opencollective.com/goreleaser/sponsors/15/website" target="_blank"><img src="https://opencollective.com/goreleaser/sponsors/15/avatar"></a>
+<a href="https://opencollective.com/goreleaser/sponsors/16/website" target="_blank"><img src="https://opencollective.com/goreleaser/sponsors/16/avatar"></a>
+
+### Backers
+
+Love our work and community? [Become a backer](https://opencollective.com/goreleaser).
+
+<a href="https://opencollective.com/goreleaser/backers/0/website" target="_blank"><img src="https://opencollective.com/goreleaser/backers/0/avatar"></a>
+<a href="https://opencollective.com/goreleaser/backers/1/website" target="_blank"><img src="https://opencollective.com/goreleaser/backers/1/avatar"></a>
+<a href="https://opencollective.com/goreleaser/backers/2/website" target="_blank"><img src="https://opencollective.com/goreleaser/backers/2/avatar"></a>
+<a href="https://opencollective.com/goreleaser/backers/3/website" target="_blank"><img src="https://opencollective.com/goreleaser/backers/3/avatar"></a>
+<a href="https://opencollective.com/goreleaser/backers/4/website" target="_blank"><img src="https://opencollective.com/goreleaser/backers/4/avatar"></a>
+<a href="https://opencollective.com/goreleaser/backers/5/website" target="_blank"><img src="https://opencollective.com/goreleaser/backers/5/avatar"></a>
+<a href="https://opencollective.com/goreleaser/backers/6/website" target="_blank"><img src="https://opencollective.com/goreleaser/backers/6/avatar"></a>
+<a href="https://opencollective.com/goreleaser/backers/7/website" target="_blank"><img src="https://opencollective.com/goreleaser/backers/7/avatar"></a>
+<a href="https://opencollective.com/goreleaser/backers/8/website" target="_blank"><img src="https://opencollective.com/goreleaser/backers/8/avatar"></a>
+<a href="https://opencollective.com/goreleaser/backers/9/website" target="_blank"><img src="https://opencollective.com/goreleaser/backers/9/avatar"></a>
+<a href="https://opencollective.com/goreleaser/backers/10/website" target="_blank"><img src="https://opencollective.com/goreleaser/backers/10/avatar"></a>
+<a href="https://opencollective.com/goreleaser/backers/11/website" target="_blank"><img src="https://opencollective.com/goreleaser/backers/11/avatar"></a>
+<a href="https://opencollective.com/goreleaser/backers/12/website" target="_blank"><img src="https://opencollective.com/goreleaser/backers/12/avatar"></a>
+<a href="https://opencollective.com/goreleaser/backers/13/website" target="_blank"><img src="https://opencollective.com/goreleaser/backers/13/avatar"></a>
+<a href="https://opencollective.com/goreleaser/backers/14/website" target="_blank"><img src="https://opencollective.com/goreleaser/backers/14/avatar"></a>
+<a href="https://opencollective.com/goreleaser/backers/15/website" target="_blank"><img src="https://opencollective.com/goreleaser/backers/15/avatar"></a>
+<a href="https://opencollective.com/goreleaser/backers/16/website" target="_blank"><img src="https://opencollective.com/goreleaser/backers/16/avatar"></a>
+<a href="https://opencollective.com/goreleaser/backers/17/website" target="_blank"><img src="https://opencollective.com/goreleaser/backers/17/avatar"></a>
+<a href="https://opencollective.com/goreleaser/backers/18/website" target="_blank"><img src="https://opencollective.com/goreleaser/backers/18/avatar"></a>
+<a href="https://opencollective.com/goreleaser/backers/19/website" target="_blank"><img src="https://opencollective.com/goreleaser/backers/19/avatar"></a>
+<a href="https://opencollective.com/goreleaser/backers/20/website" target="_blank"><img src="https://opencollective.com/goreleaser/backers/20/avatar"></a>
+<a href="https://opencollective.com/goreleaser/backers/21/website" target="_blank"><img src="https://opencollective.com/goreleaser/backers/21/avatar"></a>
+<a href="https://opencollective.com/goreleaser/backers/22/website" target="_blank"><img src="https://opencollective.com/goreleaser/backers/22/avatar"></a>
+<a href="https://opencollective.com/goreleaser/backers/23/website" target="_blank"><img src="https://opencollective.com/goreleaser/backers/23/avatar"></a>
+<a href="https://opencollective.com/goreleaser/backers/24/website" target="_blank"><img src="https://opencollective.com/goreleaser/backers/24/avatar"></a>
+<a href="https://opencollective.com/goreleaser/backers/25/website" target="_blank"><img src="https://opencollective.com/goreleaser/backers/25/avatar"></a>
+<a href="https://opencollective.com/goreleaser/backers/26/website" target="_blank"><img src="https://opencollective.com/goreleaser/backers/26/avatar"></a>
+<a href="https://opencollective.com/goreleaser/backers/27/website" target="_blank"><img src="https://opencollective.com/goreleaser/backers/27/avatar"></a>
+<a href="https://opencollective.com/goreleaser/backers/28/website" target="_blank"><img src="https://opencollective.com/goreleaser/backers/28/avatar"></a>
+<a href="https://opencollective.com/goreleaser/backers/29/website" target="_blank"><img src="https://opencollective.com/goreleaser/backers/29/avatar"></a>
+
+### Contributors
+
+This project exists thanks to all the people who contribute. [[Contribute](CONTRIBUTING.md)].
+<a href="https://github.com/goreleaser/goreleaser/graphs/contributors"><img src="https://opencollective.com/goreleaser/contributors.svg?width=890" /></a>
+
+## Stargazers over time
+[![Stargazers over time](https://starchart.cc/goreleaser/goreleaser.svg?variant=adaptive)](https://starchart.cc/goreleaser/goreleaser)
